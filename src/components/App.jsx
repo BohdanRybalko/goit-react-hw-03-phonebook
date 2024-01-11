@@ -9,6 +9,20 @@ export class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    const savedContacts = localStorage.getItem('contacts');
+
+    if (savedContacts) {
+      this.setState({ contacts: JSON.parse(savedContacts) });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   addContact = (newContact) => {
     const { contacts } = this.state;
     const isNameExists = contacts.some((contact) => contact.name === newContact.name);
@@ -40,7 +54,7 @@ export class App extends Component {
     return (
       <div>
         <h1>Phonebook</h1>
-       <ContactForm contacts={this.state.contacts} addContact={this.addContact} />
+        <ContactForm contacts={contacts} addContact={this.addContact} />
 
         <h2>Contacts</h2>
         <Filter filter={filter} onFilterChange={(value) => this.setState({ filter: value })} />
