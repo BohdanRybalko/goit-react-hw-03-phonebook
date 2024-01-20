@@ -4,23 +4,27 @@ import ContactList from 'components/ContactList';
 import Filter from 'components/Filter';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
+  const [contacts, setContacts] = useState(() => {
+    const savedContacts = localStorage.getItem('contacts');
+    return savedContacts ? JSON.parse(savedContacts) : [];
+  });
 
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
   const addContact = (newContact) => {
-    const isNameExists = contacts.some((contact) => contact.name === newContact.name);
+  const isNameExists = contacts.some(
+    (contact) => contact.name.toLowerCase() === newContact.name.toLowerCase()
+  );
 
-    if (isNameExists) {
-      alert(`${newContact.name} is already in contacts.`);
-      return;
-    }
+  if (isNameExists) {
+    alert(`${newContact.name} is already in contacts.`);
+    return;
+  }
 
-    setContacts((prevContacts) => [...prevContacts, newContact]);
-  };
+  setContacts((prevContacts) => [...prevContacts, newContact]);
+};
 
   const deleteContact = (id) => {
     setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== id));
